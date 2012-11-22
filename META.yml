@@ -1,0 +1,14 @@
+---
+abstract: 'CGI::Plus -- Extra utilities for CGI'
+author:
+    - "Miko O'Sullivan <miko@idocs.com>"
+generated_by: home grown
+license: perl
+name: CGI::Plus
+provides:
+    CGI::Plus:
+        file: lib/CGI/Plus.pm
+        version: 0.10
+requires:
+    perl: 5.003
+version: 0.10

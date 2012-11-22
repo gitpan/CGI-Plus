@@ -1,0 +1,10 @@
+MANIFEST
+Changes
+LICENSE
+Makefile.PL
+Build.PL
+META.yml
+README
+lib/CGI/Plus.pm
+lib/CGI/Plus.pod
+t/test.t
