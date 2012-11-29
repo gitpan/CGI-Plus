@@ -3,3 +3,7 @@ Revision history for Perl extension CGI::Plus
 Version 0.10 November 22, 2012
 
       Initial release
+
+    Version 0.12 November 28, 2012
+
+      Fixing prerequisite lists in CPAN upload.

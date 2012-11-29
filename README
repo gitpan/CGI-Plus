@@ -252,3 +252,7 @@ VERSION
 
       Initial release
 
+    Version 0.12 November 28, 2012
+
+      Fixing prerequisite lists in CPAN upload.
+

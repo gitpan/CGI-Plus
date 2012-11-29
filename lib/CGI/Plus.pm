@@ -7,7 +7,7 @@ use String::Util ':all';
 use CGI::Cookie;
 
 # version
-our $VERSION = '0.10';
+our $VERSION = '0.12';
 
 # Debug::ShowStuff
 # use Debug::ShowStuff ':all';
@@ -408,12 +408,6 @@ sub self_link {
 	# get parameter names from cgi
 	unless ($opts{'clear_params'})
 		{ @params{$cgi->param()} = () }
-	
-	# add params
-	#if (my $adds = $opts{'add_params'}) {
-	#	showhash $opts{'add_params'};
-	#	devexit 'add_params';
-	#}
 	
 	# get parameter names from changes
 	@params{keys %$changes} = ();
@@ -836,6 +830,10 @@ F<miko@idocs.com>
 =item Version 0.10    November 22, 2012
 
 Initial release
+
+=item Version 0.12    November 28, 2012
+
+Fixing prerequisite lists in CPAN upload.
 
 =back
 

@@ -10,7 +10,11 @@ $make_args = {
                'EXE_FILES' => [],
                'VERSION_FROM' => 'lib/CGI/Plus.pm',
                'LICENSE' => 'perl',
-               'PREREQ_PM' => {}
+               'PREREQ_PM' => {
+                                'CGI::Cookie' => 0,
+                                'CGI::Safe' => 0,
+                                'String::Util' => 0
+                              }
              };
 
 

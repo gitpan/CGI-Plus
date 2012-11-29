@@ -252,5 +252,9 @@ F<miko@idocs.com>
 
 Initial release
 
+=item Version 0.12    November 28, 2012
+
+Fixing prerequisite lists in CPAN upload.
+
 =back
 
