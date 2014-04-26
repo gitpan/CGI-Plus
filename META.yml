@@ -4,14 +4,14 @@ author:
     - "Miko O'Sullivan <miko@idocs.com>"
 generated_by: home grown
 license: perl
-name: CGI::Plus
+name: CGI-Plus
 provides:
     CGI::Plus:
         file: lib/CGI/Plus.pm
-        version: 0.12
+        version: 0.13
 requires:
     CGI::Cookie: 0
     CGI::Safe: 0
     String::Util: 0
     perl: 5.003
-version: 0.12
+version: 0.13

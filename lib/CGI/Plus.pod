@@ -43,6 +43,10 @@ use the object-oriented interface.
  # output HTTP header with outgoing cookies, including CSRF
  # check cookie, automatically added
  print $cgi->header_plus;
+ 
+ # output header again if it hasn't already been sent, but if it
+ # has then output an empty string
+ print $cgi->header_plus;
 
  # output the URL of the current page but set a new value
  # for the "t" param and remove the "j" param
@@ -64,7 +68,7 @@ use the object-oriented interface.
 
  # get the CSRF check param for use in a URL
  # output: csrf=KTFnGgpkZ4
- print $cgi->csrf_param, "\n";
+ print $cgi->csrf_param;
 
  # set a custom header
  $cgi->set_header('myheader', 'whatever');
@@ -255,6 +259,10 @@ Initial release
 =item Version 0.12    November 28, 2012
 
 Fixing prerequisite lists in CPAN upload.
+
+=item Version 0.13    April 25, 2014
+
+Fixed error in META.yml.
 
 =back
 

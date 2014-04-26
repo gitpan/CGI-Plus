@@ -7,11 +7,10 @@ use String::Util ':all';
 use CGI::Cookie;
 
 # version
-our $VERSION = '0.12';
+our $VERSION = '0.13';
 
 # Debug::ShowStuff
 # use Debug::ShowStuff ':all';
-# use Debug::ShowStuff::ShowVar;
 
 # enable file uploads
 $CGI::DISABLE_UPLOADS = 0;
@@ -67,6 +66,10 @@ use the object-oriented interface.
  # output HTTP header with outgoing cookies, including CSRF
  # check cookie, automatically added
  print $cgi->header_plus;
+ 
+ # output header again if it hasn't already been sent, but if it
+ # has then output an empty string
+ print $cgi->header_plus;
 
  # output the URL of the current page but set a new value
  # for the "t" param and remove the "j" param
@@ -88,7 +91,7 @@ use the object-oriented interface.
 
  # get the CSRF check param for use in a URL
  # output: csrf=KTFnGgpkZ4
- print $cgi->csrf_param, "\n";
+ print $cgi->csrf_param;
 
  # set a custom header
  $cgi->set_header('myheader', 'whatever');
@@ -123,7 +126,7 @@ CGI::Plus can be installed with the usual routine:
 
 
 #------------------------------------------------------------------------------
-# new
+## new
 #
 
 =head2 CGI::Plus->new()
@@ -165,12 +168,6 @@ sub ic { return shift->incoming_cookies(@_) }
 sub outgoing_cookies { return $_[0]->{'cookies'}->{'outgoing'} }
 sub oc { return shift->outgoing_cookies(@_) }
 
-# Help with transitioning to ic and oc
-# sub cg {croak 'do not use $cgi->cg'}
-# sub gc {croak 'do not use $cgi->gc'}
-# sub cs {croak 'do not use $cgi->cs'}
-# sub sc {croak 'do not use $cgi->sc'}
-
 #
 # ic, oc
 #------------------------------------------------------------------------------
@@ -191,6 +188,7 @@ sub initialize_cookies {
 	
 	# get hash of cookies that were sent
 	%cookies = CGI::Cookie->fetch();
+	# showhash \%cookies, title=>'%cookies';
 	
 	# populate cookie values
 	foreach my $name (keys %cookies) {
@@ -237,12 +235,23 @@ sub resend_cookie {
 }
 
 sub cookie_resend {
-	my ($cgi, $name) = @_;
+	my ($cgi, $name, %opts) = @_;
 	my ($got, $send);
-	$send = {};
+	
+	# default %opts
+	%opts = (ensure=>1, %opts);
+	
+	# if not ensuring existence of cookie, and cookie doesn't
+	# exist, return  undef
+	unless ( $cgi->ic->{$name} || $opts{'ensure'}) {
+		return undef;
+	}
 	
 	# get sent cookie
 	$got = $cgi->ic->{$name} || {'name'=>$name};
+	
+	# create cookie that gets sent back out
+	$send = {};
 	
 	# clone $got cookie
 	foreach my $key (keys %$got) {
@@ -508,6 +517,11 @@ sub header_plus {
 	my ($cgi, %opts) = @_;
 	my (@cookies);
 	
+	# if header has already been sent, don't send it again, just
+	# return empty string
+	if ($cgi->{'header_sent'})
+		{ return '' }
+	
 	# set content type
 	if ( (! $opts{'-type'}) && $cgi->{'content_type'} ) {
 		$opts{'-type'} = $cgi->{'content_type'};
@@ -550,6 +564,20 @@ sub header_plus {
 			}
 		}
 		
+		# set domain
+		if ($element{'domain'})
+			{ $params{'-domain'} = $element{'domain'} }
+		
+		# set expires: default to one year
+		if (exists $element{'expires'}) {
+			if (defined $element{'expires'})
+				{ $params{'-expires'} = $element{'expires'} }
+		}
+		else {
+			$params{'-expires'} = '+1y';
+		}
+		
+		# create cookie object
 		$cookie = CGI::Cookie->new(%params);
 		
 		if (! defined $cookie) {
@@ -564,6 +592,9 @@ sub header_plus {
 	# add cookies to header options
 	if (@cookies)
 		{ $opts{'-cookie'} = \@cookies }
+	
+	# note that header has been sent
+	$cgi->{'header_sent'} = 1;
 	
 	# call super method
 	return $cgi->SUPER::header(%opts);
@@ -694,6 +725,9 @@ sub csrf_field {
 	# get csrf cookie
 	$cookie = $cgi->oc->{$name};
 	$cookie or die 'do not have csrf cookie';
+	
+	# showhash $cookie;
+	# showhash $cookie->{'values'}->{'v'};
 	
 	# build return value
 	$rv =
@@ -834,6 +868,10 @@ Initial release
 =item Version 0.12    November 28, 2012
 
 Fixing prerequisite lists in CPAN upload.
+
+=item Version 0.13    April 25, 2014
+
+Fixed error in META.yml.
 
 =back
 

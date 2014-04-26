@@ -1,10 +1,10 @@
 MANIFEST
 Changes
-LICENSE
-Makefile.PL
-Build.PL
 META.yml
+Makefile.PL
 README
+Build.PL
+LICENSE
+t/test.t
 lib/CGI/Plus.pm
 lib/CGI/Plus.pod
-t/test.t
