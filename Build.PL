@@ -10,7 +10,8 @@ $params = {
             'requires' => {
                             'CGI::Cookie' => 0,
                             'CGI::Safe' => 0,
-                            'String::Util' => 0
+                            'String::Util' => 0,
+                            'Test' => 0
                           },
             'dist_version_from' => 'lib/CGI/Plus.pm',
             'license' => 'perl'

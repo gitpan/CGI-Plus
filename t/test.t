@@ -2,10 +2,10 @@
 use strict;
 
 ## TESTING
-#BEGIN { system '/usr/bin/clear' }
-#use Debug::ShowStuff ':all';
-#use Debug::ShowStuff::ShowVar;
-#forcetext();
+# BEGIN { system '/usr/bin/clear' }
+# use Debug::ShowStuff ':all';
+# use Debug::ShowStuff::ShowVar;
+# forcetext();
 
 use CGI::Plus;
 use Test;
@@ -33,7 +33,7 @@ $ENV{'HTTP_ACCEPT'} = 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*
 $ENV{'HTTP_ACCEPT_ENCODING'} = 'gzip, deflate';
 $ENV{'HTTP_ACCEPT_LANGUAGE'} = 'en-us,en;q=0.5';
 $ENV{'HTTP_CONNECTION'} = 'keep-alive';
-$ENV{'HTTP_COOKIE'} = 'cookie_single_val=pH3FdqRbvd; cookie_multiple_vals=v&xD5wnHLJNv&j=3';
+$ENV{'HTTP_COOKIE'} = 'cookie_single_val=pH3FdqRbvd; cookie_multiple_vals=v&xD5wnHLJNv&j&3';
 $ENV{'HTTP_HOST'} = 'www.example.com';
 $ENV{'HTTP_USER_AGENT'} = 'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:14.0) Gecko/20100101 Firefox/14.0.1';
 $ENV{'LD_LIBRARY_PATH'} = '/usr/local/apache2/lib';
@@ -64,15 +64,12 @@ $ENV{'SHOWSTUFF'} = '1';
 # main body
 #
 do {
-	# variables
-	my ($cgi);
-
 
 	#------------------------------------------------------------------------------
 	##- get cgi object
 	#
 	do {
-		$cgi = CGI::Plus->new();
+		my $cgi = CGI::Plus->new();
 		is_def '$cgi', $cgi;
 	};
 	#
@@ -85,6 +82,7 @@ do {
 	#
 	do {
 		my (@ys);
+		my $cgi = CGI::Plus->new();
 		
 		# single param
 		comp $cgi->param('x'), 2;
@@ -103,6 +101,7 @@ do {
 	#
 	do {
 		my ($csrf_value);
+		my $cgi = CGI::Plus->new();
 		
 		# set csrf
 		comp_bool $cgi->csrf(), 0;
@@ -135,6 +134,7 @@ do {
 	#
 	do {
 		my ($url);
+		my $cgi = CGI::Plus->new();
 		
 		# get current url
 		$url = $cgi->self_link();
@@ -181,6 +181,7 @@ do {
 	#
 	do {
 		my ($ic, $cookie);
+		my $cgi = CGI::Plus->new();
 		
 		# get incoming cookies
 		$ic = $cgi->ic();
@@ -207,6 +208,7 @@ do {
 	#
 	do {
 		my ($old_cookie, $new_cookie);
+		my $cgi = CGI::Plus->new();
 		
 		# get original cookie
 		$old_cookie = $cgi->ic->{'cookie_multiple_vals'};
@@ -235,6 +237,7 @@ do {
 	#
 	do {
 		my ($cookie, %headers);
+		my $cgi = CGI::Plus->new();
 		
 		# new cookie with multiple values
 		$cookie = $cgi->new_send_cookie('new_cookie');
@@ -261,13 +264,14 @@ do {
 	#
 	# new_send_cookie
 	#------------------------------------------------------------------------------
-
-
+	
+	
 	#------------------------------------------------------------------------------
 	##- set_header
 	#
-	do {
+	do { ##i
 		my (%headers);
+		my $cgi = CGI::Plus->new();
 		
 		# set new header
 		$cgi->set_header('myheader', 'whatever');
@@ -288,6 +292,7 @@ do {
 	#
 	do {
 		my (%headers);
+		my $cgi = CGI::Plus->new();
 		
 		# set new header
 		$cgi->set_content_type('text/whatever');

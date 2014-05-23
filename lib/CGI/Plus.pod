@@ -264,5 +264,9 @@ Fixing prerequisite lists in CPAN upload.
 
 Fixed error in META.yml.
 
+=item Version 0.14    May 23, 2014
+
+Fixed bugs in test script.
+
 =back
 

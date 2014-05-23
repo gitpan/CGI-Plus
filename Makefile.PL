@@ -13,7 +13,8 @@ $make_args = {
                'PREREQ_PM' => {
                                 'CGI::Cookie' => 0,
                                 'CGI::Safe' => 0,
-                                'String::Util' => 0
+                                'String::Util' => 0,
+                                'Test' => 0
                               }
              };
 

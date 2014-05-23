@@ -7,10 +7,11 @@ use String::Util ':all';
 use CGI::Cookie;
 
 # version
-our $VERSION = '0.13';
+our $VERSION = '0.14';
 
 # Debug::ShowStuff
 # use Debug::ShowStuff ':all';
+# use Debug::ShowStuff::ShowVar;
 
 # enable file uploads
 $CGI::DISABLE_UPLOADS = 0;
@@ -872,6 +873,10 @@ Fixing prerequisite lists in CPAN upload.
 =item Version 0.13    April 25, 2014
 
 Fixed error in META.yml.
+
+=item Version 0.14    May 23, 2014
+
+Fixed bugs in test script.
 
 =back
 
