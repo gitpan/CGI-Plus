@@ -14,3 +14,7 @@ CGI::Plus
     Version 0.14 May 23, 2014
 
       Fixed bugs in test script.
+
+    Version 0.15 January 4, 2015
+
+      Gave tests names.

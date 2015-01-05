@@ -268,5 +268,9 @@ Fixed error in META.yml.
 
 Fixed bugs in test script.
 
+=item Version 0.15 January 4, 2015
+
+Gave tests names.
+
 =back
 

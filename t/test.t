@@ -1,15 +1,19 @@
 #!/usr/bin/perl -w
 use strict;
+use Carp 'croak';
 
-## TESTING
+# TESTING
 # BEGIN { system '/usr/bin/clear' }
 # use Debug::ShowStuff ':all';
 # use Debug::ShowStuff::ShowVar;
 # forcetext();
 
+# use the module
 use CGI::Plus;
-use Test;
-BEGIN { plan tests => 36 };
+
+# plan tests
+use Test::More;
+plan tests => 37;
 
 # general purpose variable
 my ($val, $org, $new, $got, $should);
@@ -69,27 +73,31 @@ do {
 	##- get cgi object
 	#
 	do {
-		my $cgi = CGI::Plus->new();
-		is_def '$cgi', $cgi;
+		my ($cgi);
+		my $name = 'get cgi object';
+		
+		$cgi = CGI::Plus->new();
+		is_def '$cgi', $cgi, $name;
 	};
 	#
 	# get cgi object
 	#------------------------------------------------------------------------------
-
-
+	
+	
 	#------------------------------------------------------------------------------
 	##- params
 	#
 	do {
-		my (@ys);
-		my $cgi = CGI::Plus->new();
+		my (@ys, $cgi);
+		$cgi = CGI::Plus->new();
+		my $name = 'params';
 		
 		# single param
-		comp $cgi->param('x'), 2;
+		comp $cgi->param('x'), 2, "$name: single param";
 		
 		# multiple params
 		@ys = $cgi->param('y');
-		comp scalar(@ys), 2;
+		comp scalar(@ys), 2, "$name: multiple params";
 	};
 	#
 	# params
@@ -100,76 +108,82 @@ do {
 	##- csrf
 	#
 	do {
-		my ($csrf_value);
-		my $cgi = CGI::Plus->new();
+		my ($csrf_value, $cgi, $secondary_name);
+		$cgi = CGI::Plus->new();
+		my $name = 'csrf';
 		
-		# set csrf
-		comp_bool $cgi->csrf(), 0;
-		comp_bool $cgi->csrf(1), 1;
-		comp_bool $cgi->csrf(), 1;
+		$secondary_name = 'set csrf';
+		comp_bool $cgi->csrf(),  0, "$name, $secondary_name: [1]";
+		comp_bool $cgi->csrf(1), 1, "$name, $secondary_name: [2]";
+		comp_bool $cgi->csrf(),  1, "$name, $secondary_name: [3]";
 		
 		# get csrf value
 		$csrf_value = $cgi->oc->{'csrf'}->{'values'}->{'v'};
-		is_def '$csrf_value', $csrf_value;
+		is_def '$csrf_value', $csrf_value, "$name: get csrf value";
 		
 		# csrf name
-		comp $cgi->csrf_name, 'csrf';
+		comp $cgi->csrf_name, 'csrf', "$name: csrf name";
 		
 		# csrf form field
-		comp $cgi->csrf_field, qq|<input type="hidden" name="csrf" value="$csrf_value">|;
+		comp
+			$cgi->csrf_field,
+			qq|<input type="hidden" name="csrf" value="$csrf_value">|,
+			"$name: csrf form field";
 		
 		# csrf URL param
-		comp $cgi->csrf_param, qq|csrf=$csrf_value|;
+		comp $cgi->csrf_param, qq|csrf=$csrf_value|, "$name: csrf URL param";
 		
 		# csrf_check: should return false
-		comp_bool $cgi->csrf_check(), 0;
+		comp_bool $cgi->csrf_check(), 0, "$name: csrf_check: should return false";
 	};
 	#
 	# csrf
 	#------------------------------------------------------------------------------
-
-
+	
+	
+	
 	#------------------------------------------------------------------------------
 	##- self_link
 	#
 	do {
-		my ($url);
-		my $cgi = CGI::Plus->new();
+		my ($url, $cgi, $secondary_name);
+		$cgi = CGI::Plus->new();
+		my $name = 'self_link';
 		
-		# get current url
+		$secondary_name = 'get current url';
 		$url = $cgi->self_link();
-		if ($url =~ m|x=2|s) {ok(1)} else {ok(0); die 'did not get param x=2'}
-		if ($url =~ m|y=1|s) {ok(1)} else {ok(0); die 'did not get param y=1'}
-		if ($url =~ m|y=2|s) {ok(1)} else {ok(0); die 'did not get param y=2'}
+		ok ($url =~ m|x=2|s, "$name, $secondary_name: param x=2");
+		ok ($url =~ m|y=1|s, "$name, $secondary_name: param y=1");
+		ok ($url =~ m|y=2|s, "$name, $secondary_name: param y=2");
 		
-		# set new value for x
+		$secondary_name = 'set new value for x';
 		$url = $cgi->self_link(params=>{x=>3});
-		if ($url =~ m|x=3|s) {ok(1)} else {ok(0); die 'did not get param x=3'}
-		if ($url =~ m|y=1|s) {ok(1)} else {ok(0); die 'did not get param y=1'}
-		if ($url =~ m|y=2|s) {ok(1)} else {ok(0); die 'did not get param y=2'}
+		ok ($url =~ m|x=3|s, "$name, $secondary_name: param x=3");
+		ok ($url =~ m|y=1|s, "$name, $secondary_name: param y=1");
+		ok ($url =~ m|y=2|s, "$name, $secondary_name: param y=2");
 		
-		# set new value for y
+		$secondary_name = 'set new value for y';
 		$url = $cgi->self_link(params=>{y=>3});
-		if ($url =~ m|x=2|s) {ok(1)} else {ok(0); die 'did not get param x=2'}
-		if ($url =~ m|y=3|s) {ok(1)} else {ok(0); die 'did not get param y=3'}
+		ok ($url =~ m|x=2|s, "$name, $secondary_name: param x=2");
+		ok ($url =~ m|y=3|s, "$name, $secondary_name: param y=3");
 		
-		# should only have one y param
+		$secondary_name = 'should only have one y param';
 		$url =~ s|y=3||s;
-		if ($url !~ m|y=|s) {ok(1)} else {ok(0); die 'should not have y param'}
+		ok ($url !~ m|y=|s, "$name, $secondary_name");
 		
-		# set new valus for y
+		$secondary_name = 'set new valus for y';
 		$url = $cgi->self_link(params=>{y=>[5,6]});
-		if ($url =~ m|x=2|s) {ok(1)} else {ok(0); die 'did not get param x=2'}
-		if ($url =~ m|y=5|s) {ok(1)} else {ok(0); die 'did not get param y=5'}
-		if ($url =~ m|y=6|s) {ok(1)} else {ok(0); die 'did not get param y=6'}
+		ok ($url =~ m|x=2|s, "$name, $secondary_name: param x=2");
+		ok ($url =~ m|y=5|s, "$name, $secondary_name: param y=5");
+		ok ($url =~ m|y=6|s, "$name, $secondary_name: param y=6");
 		
 		# remove all params
 		$url = $cgi->self_link(clear_params=>1);
-		comp $url, '/cgi-plus/';
+		comp $url, '/cgi-plus/', "$name: remove all params";
 		
 		# clear params, add new param
 		$url = $cgi->self_link(clear_params=>1, params=>{j=>7});
-		comp $url, '/cgi-plus/?j=7';
+		comp $url, '/cgi-plus/?j=7', "$name: clear params, add new param";
 	};
 	#
 	# self_link
@@ -180,23 +194,26 @@ do {
 	##- incoming cookies
 	#
 	do {
-		my ($ic, $cookie);
-		my $cgi = CGI::Plus->new();
+		my ($ic, $cookie, $cgi);
+		my $name = 'incoming cookies';
+		
+		# get cgi object
+		$cgi = CGI::Plus->new();
 		
 		# get incoming cookies
 		$ic = $cgi->ic();
-		is_def '$ic', $ic;
+		is_def '$ic', $ic, "$name: get incoming cookies";
 		
 		# values
 		# $ENV{'HTTP_COOKIE'} = 'cookie_single_val=pH3FdqRbvd; cookie_multiple_vals=v&xD5wnHLJNv';
 		
 		# single value cookie
 		$cookie = $ic->{'cookie_single_val'};
-		comp $cookie->{'value'}, 'pH3FdqRbvd';
+		comp $cookie->{'value'}, 'pH3FdqRbvd', "$name: single value cookie";
 		
 		# multiple value cookie
 		$cookie = $ic->{'cookie_multiple_vals'};
-		comp $cookie->{'values'}->{'v'}, 'xD5wnHLJNv';
+		comp $cookie->{'values'}->{'v'}, 'xD5wnHLJNv', "$name: multiple value cookie";
 	};
 	#
 	# incoming cookies
@@ -209,23 +226,28 @@ do {
 	do {
 		my ($old_cookie, $new_cookie);
 		my $cgi = CGI::Plus->new();
+		my $name = 'resend_cookie';
 		
 		# get original cookie
 		$old_cookie = $cgi->ic->{'cookie_multiple_vals'};
-		is_def '$old_cookie', $old_cookie;
+		is_def '$old_cookie', $old_cookie, "$name: get original cookie";
 		
 		# get resent cookie
 		$new_cookie = $cgi->resend_cookie('cookie_multiple_vals');
-		is_def '$new_cookie', $new_cookie;
+		is_def '$new_cookie', $new_cookie, $old_cookie, "$name: get resent cookie";
 		
 		# should not be same object
-		if ("$old_cookie" eq "$new_cookie") {
-			ok(0);
-			die "new and old cookies should not be same objects";
-		}
+		comp
+			"$old_cookie",
+			"$new_cookie",
+			"$name: should not be same object",
+			same => 0;
 		
 		# compare values
-		comp $old_cookie->{'values'}->{'v'}, $new_cookie->{'values'}->{'v'};
+		comp
+			$old_cookie->{'values'}->{'v'},
+			$new_cookie->{'values'}->{'v'},
+			"$name: compare values";
 	};
 	#
 	# resend_cookie
@@ -236,28 +258,25 @@ do {
 	##- new_send_cookie
 	#
 	do {
-		my ($cookie, %headers);
+		my ($cookie, %headers, $secondary_name);
 		my $cgi = CGI::Plus->new();
+		my $name = 'new_send_cookie';
 		
-		# new cookie with multiple values
+		$secondary_name = 'new cookie with multiple values';
 		$cookie = $cgi->new_send_cookie('new_cookie');
-		is_def '$cookie', $cookie;
-		is_def "\$cookie->{'values'}", $cookie->{'values'};
+		is_def '$cookie', $cookie, "$name, $secondary_name: \$cookie";
+		is_def "\$cookie->{'values'}", $cookie->{'values'}, "$name, $secondary_name: \$cookie->{'values'}";
+		
+		# set new value for x
 		$cookie->{'values'}->{'x'} = 100;
 		
 		# get headers
 		%headers = headers($cgi);
 		
-		# cookies should include new_cookie
+		$secondary_name = 'cookies should include new_cookie';
 		FIND_COOKIE: {
 			foreach my $cookie (@{$headers{'Set-Cookie'}}) {
-				if ($cookie =~ m|^new_cookie=x&100;|s) {
-					ok(1);
-					last FIND_COOKIE;
-				}
-				
-				ok(0);
-				die 'did not get new_cookie';
+				ok($cookie =~ m|^new_cookie=x&100;|s, "$name, $secondary_name: $cookie");
 			}
 		}
 	};
@@ -272,6 +291,7 @@ do {
 	do { ##i
 		my (%headers);
 		my $cgi = CGI::Plus->new();
+		my $name = 'set_header';
 		
 		# set new header
 		$cgi->set_header('myheader', 'whatever');
@@ -280,7 +300,10 @@ do {
 		%headers = headers($cgi);
 		
 		# chould have new header
-		comp $headers{'Myheader'}->[0], 'whatever';
+		comp
+			$headers{'Myheader'}->[0],
+			'whatever',
+			$name;
 	};
 	#
 	# set_header
@@ -293,16 +316,19 @@ do {
 	do {
 		my (%headers);
 		my $cgi = CGI::Plus->new();
+		my $name = 'set_header';
 		
 		# set new header
 		$cgi->set_content_type('text/whatever');
-		# println $cgi->header_plus;
 		
 		# get headers
 		%headers = headers($cgi);
 		
 		# should have new header
-		comp $headers{'Content-Type'}->[0], 'text/whatever; charset=ISO-8859-1';
+		comp
+			$headers{'Content-Type'}->[0],
+			'text/whatever; charset=ISO-8859-1',
+			$name;
 	};
 	#
 	# set_content_type
@@ -325,7 +351,10 @@ do {
 # err
 #
 sub err {
-	my ($function_name, $err) = @_;
+	my ($function_name, $err, $test_name) = @_;
+	
+	# $test_name is require
+	$test_name or croak '$test_name is require';
 	
 	print STDERR $function_name, ': ', $err, "\n";
 	ok(0);
@@ -340,19 +369,29 @@ sub err {
 # comp
 #
 sub comp {
-	my ($is, $shouldbe) = @_;
+	my ($is, $should, $test_name, %opts) = @_;
+	my ($comp);
 	
-	if(! equndef($is, $shouldbe)) {
-		print STDERR 
-			"\n",
-			"\tis:         ", (defined($is) ?       $is       : '[undef]'), "\n",
-			"\tshould be : ", (defined($shouldbe) ? $shouldbe : '[undef]'), "\n\n";	
-		ok(0);
-		exit;
-	}
+	# $test_name is required
+	$test_name or croak ('$test_name is required');
 	
-	# else ok
-	ok(1);
+	# default options
+	%opts = (same=>1, %opts);
+	
+	# add got and should to test name
+	$test_name .=
+		' | is: ' . show_val($is) .
+		' | got: ' . show_val($should);
+	
+	# compare
+	$comp = $is eq $should;
+	
+	# reverse comparison if options indicate to do so
+	if (! $opts{'same'})
+		{ $comp = ! $comp }
+	
+	# set ok
+	ok($comp, $test_name);
 }
 #
 # comp
@@ -363,25 +402,23 @@ sub comp {
 # comp_bool
 #
 sub comp_bool {
-	my ($is, $shouldbe) = @_;
+	my ($is, $shouldbe, $test_name) = @_;
+	
+	# $test_name is require
+	$test_name or croak '$test_name is require';
 	
 	if( $is && $shouldbe ) {
-		ok(1);
+		ok(1, $test_name);
 		return 1;
 	}
 	
 	if( (! $is) && (! $shouldbe) ) {
-		ok(1);
+		ok(1, $test_name);
 		return 1;
 	}
 	
 	# else not ok
-	print STDERR
-		"different boolean values:\n",
-		"is:     ",     ($is       ? 'true' : 'false'), "\n",
-		"should: ", ($shouldbe ? 'true' : 'false'), "\n";
-	ok(0);
-	exit;
+	ok(0, $test_name);
 }
 #
 # comp_bool
@@ -414,7 +451,10 @@ sub equndef {
 # is_def
 #
 sub is_def {
-	my ($name, $var) = @_;
+	my ($name, $var, $test_name) = @_;
+	
+	# $test_name is require
+	$test_name or croak '$test_name is require';
 	
 	# if not defined, throw error
 	if (! defined $var) {
@@ -423,7 +463,7 @@ sub is_def {
 	}
 	
 	# else ok
-	ok(1);
+	ok(1, $test_name);
 }
 #
 # is_def
@@ -467,4 +507,52 @@ sub headers {
 }
 #
 # headers
+#------------------------------------------------------------------------------
+
+
+#------------------------------------------------------------------------------
+# show_val
+#
+sub show_val {
+	my ($str) = @_;
+	
+	# not defined
+	if (! defined $str) {
+		return '[undef]';
+	}
+	
+	# empty string
+	if ($str eq '') {
+		return '[empty string]';
+	}
+	
+	# no content string
+	if ($str !~ m|\S|s) {
+		return '[no content string]';
+	}
+	
+	# else return value
+	return collapse($str);
+}
+#
+# show_val
+#------------------------------------------------------------------------------
+
+
+#------------------------------------------------------------------------------
+# collapse
+#
+sub collapse {
+	my ($val) = @_;
+	
+	if (defined $val) {
+		$val =~ s|^\s+||s;
+		$val =~ s|\s+$||s;
+		$val =~ s|\s+| |sg;
+	}
+	
+	return $val;
+}
+#
+# collapse
 #------------------------------------------------------------------------------

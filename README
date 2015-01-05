@@ -268,3 +268,7 @@ VERSION
 
       Fixed bugs in test script.
 
+    Version 0.15 January 4, 2015
+
+      Gave tests names.
+

@@ -7,7 +7,7 @@ use String::Util ':all';
 use CGI::Cookie;
 
 # version
-our $VERSION = '0.14';
+our $VERSION = '0.15';
 
 # Debug::ShowStuff
 # use Debug::ShowStuff ':all';
@@ -877,6 +877,10 @@ Fixed error in META.yml.
 =item Version 0.14    May 23, 2014
 
 Fixed bugs in test script.
+
+=item Version 0.15 January 4, 2015
+
+Gave tests names.
 
 =back
 

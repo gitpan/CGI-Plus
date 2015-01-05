@@ -8,11 +8,10 @@ name: CGI-Plus
 provides:
     CGI::Plus:
         file: lib/CGI/Plus.pm
-        version: 0.14
+        version: 0.15
 requires:
     CGI::Cookie: 0
     CGI::Safe: 0
-    String::Util: 0
-    Test: 0
+    String::Util: 1.24
     perl: 5.003
-version: 0.14
+version: 0.15
